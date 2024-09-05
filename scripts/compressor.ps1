@@ -1,29 +1,48 @@
 param (
-    [string]$FolderPath  # Accepts the folder path as an argument from the Manager app
+    [string]$FolderPath  
 )
 
-# Define the path for the backup folder and log file
-$backupFolder = "$env:USERPROFILE\Documents\OLTAB_Backup"
-$logFilePath = Join-Path (Get-Location) "data\backup_log.txt"
+$backupFolder = Join-Path $env:USERPROFILE "Documents\OLTAB_Backup"
+$scriptDirectory = Split-Path -Parent $MyInvocation.MyCommand.Definition
+$dataFolder = Join-Path $scriptDirectory "data"
+$logFilePath = Join-Path $dataFolder "backup_log.txt"
 
-# Create the backup folder if it doesn't exist
-if (-not (Test-Path $backupFolder)) {
-    New-Item -ItemType Directory -Path $backupFolder | Out-Null
+if (-not (Test-Path $dataFolder)) {
+    New-Item -ItemType Directory -Path $dataFolder | Out-Null
 }
 
-# Get the current date and time for the backup file name
+Write-Host "============================================="
+Write-Host "  Welcome to OLTAB - Offline Test Auto Backup"
+Write-Host "============================================="
+Write-Host "`nStarting the backup process for folder: $FolderPath"
+
+Add-Content -Path $logFilePath -Value "[$(Get-Date)] Starting the backup process for folder: $FolderPath"
+
+if (-not (Test-Path $backupFolder)) {
+    New-Item -ItemType Directory -Path $backupFolder | Out-Null
+    Add-Content -Path $logFilePath -Value "[$(Get-Date)] Created backup folder: $backupFolder"
+} else {
+    Add-Content -Path $logFilePath -Value "[$(Get-Date)] Backup folder already exists: $backupFolder"
+}
+
 $date = Get-Date -Format "yyyy-MM-dd_HH-mm"
 $folderName = Split-Path $FolderPath -Leaf
 $archiveName = "backup_${folderName}_$date.zip"
 $archivePath = Join-Path $backupFolder $archiveName
 
-# Compress the folder into a ZIP file and log the operation
+Add-Content -Path $logFilePath -Value "[$(Get-Date)] Preparing to create archive: $archivePath"
+
 try {
     Compress-Archive -Path $FolderPath -DestinationPath $archivePath -Force
-    Write-Output "[$(Get-Date)] Backup successful: $archiveName"
     Add-Content -Path $logFilePath -Value "[$(Get-Date)] Backup successful: $archiveName"
-}
-catch {
-    Write-Output "[$(Get-Date)] Backup failed: $_"
+    Write-Host "`nBackup successful: $archiveName"
+} catch {
     Add-Content -Path $logFilePath -Value "[$(Get-Date)] Backup failed: $_"
+    Write-Host "`nBackup failed: $_"
 }
+
+Add-Content -Path $logFilePath -Value "[$(Get-Date)] Completed backup process for folder: $FolderPath"
+Write-Host "`nBackup process completed."
+
+Write-Host "`nExiting in 5 seconds..."
+Start-Sleep -Seconds 5 
