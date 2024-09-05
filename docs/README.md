@@ -72,7 +72,7 @@ All events, including successes and errors, are logged in `data/backup_log.txt`.
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the MIT License - see the [LICENSE](https://github.com/YounesElMehdi/OLTAB/LICENSE) file for details.
 
 ## Contact
 
