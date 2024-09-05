@@ -14,7 +14,7 @@
 
 ## Installation
 
-1. **Download the latest release** from the [Releases page](https://github.com/YOUR_USERNAME/OLTAB/releases).
+1. **Download the latest release** from the [Releases page](https://github.com/YounesElMehdi/OLTAB/releases).
 2. Extract the ZIP file to a desired location on your computer.
 3. Run the application executable (`OLTAB.exe`).
 
